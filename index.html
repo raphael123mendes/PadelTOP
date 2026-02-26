@@ -478,6 +478,18 @@
 
     <!-- TAB: TODAY -->
     <div id="view-today" class="tab-view">
+      <!-- Resume Draft Banner -->
+      <div id="resume-banner" style="display:none;margin-bottom:16px">
+        <div style="background:rgba(90,255,126,0.08);border:1px solid rgba(90,255,126,0.3);border-radius:14px;padding:16px;">
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--accent);margin-bottom:4px">📋 Draft in progress</div>
+          <div id="resume-meta" style="font-size:13px;color:var(--text2);margin-bottom:12px"></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" style="padding:10px 0;font-size:13px" onclick="resumeDraft()">Resume Session</button>
+            <button class="btn btn-secondary" style="padding:10px 0;font-size:13px" onclick="discardDraft()">Discard</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Setup -->
       <div id="setup-panel">
         <p class="section-title">Number of Players</p>
@@ -497,6 +509,7 @@
         <div class="flex-between mt-20" style="margin-bottom:12px">
           <span class="section-title" style="margin:0">15 Games</span>
           <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px" onclick="saveDraft()">📋 Draft</button>
             <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px" onclick="saveSession()">💾 Save</button>
             <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px" onclick="confirmReset()">↺ Reset</button>
           </div>
@@ -741,7 +754,7 @@ function initApp() {
   document.getElementById('header-username').textContent = currentUser.name;
   document.getElementById('header-avatar').textContent = currentUser.avatar || currentUser.name.charAt(0).toUpperCase();
 
-  // restore session
+  // restore local session
   const saved = localStorage.getItem('padel_session');
   if (saved) {
     Object.assign(state, JSON.parse(saved));
@@ -751,6 +764,64 @@ function initApp() {
     }
   }
   loadHistory();
+}
+
+// ============================================================
+//  DRAFT — save/resume in-progress session
+// ============================================================
+async function saveDraft() {
+  if (state.games.length === 0) { toast('No active session to draft', 'error'); return; }
+  toast('Saving draft…');
+  let data = githubData;
+  if (!data) data = await githubGet();
+  if (!data) { toast('Cannot connect to GitHub', 'error'); return; }
+  githubData = data;
+
+  data.draft = {
+    savedBy: currentUser.username,
+    savedAt: new Date().toISOString(),
+    players: state.players,
+    numPlayers: state.numPlayers,
+    games: state.games,
+    scores: state.scores
+  };
+
+  const ok = await githubPut(data);
+  if (!ok) { toast('Draft save failed', 'error'); return; }
+  githubData = data;
+  toast('Draft saved ✓ — resume next week!', 'success');
+}
+
+async function checkForDraft(data) {
+  if (!data || !data.draft) return;
+  const d = data.draft;
+  const date = new Date(d.savedAt).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' });
+  const scored = Object.values(d.scores || {}).filter(s => { const [a,b] = s.split(':'); return a!==''&&b!==''; }).length;
+  document.getElementById('resume-meta').textContent =
+    `${d.players.join(', ')} · ${scored}/${d.games.length} games scored · saved ${date} by ${d.savedBy}`;
+  document.getElementById('resume-banner').style.display = 'block';
+}
+
+function resumeDraft() {
+  if (!githubData || !githubData.draft) return;
+  const d = githubData.draft;
+  state.players = d.players;
+  state.numPlayers = d.numPlayers;
+  state.games = d.games;
+  state.scores = d.scores || {};
+  saveLocal();
+  document.getElementById('resume-banner').style.display = 'none';
+  showGamesPanel();
+  renderGames();
+  toast('Session resumed! ✓', 'success');
+}
+
+async function discardDraft() {
+  if (!githubData) return;
+  document.getElementById('resume-banner').style.display = 'none';
+  githubData.draft = null;
+  await githubPut(githubData);
+  toast('Draft discarded');
 }
 
 // ============================================================
@@ -948,6 +1019,8 @@ async function loadHistory() {
   }
   githubData = data;
   renderHistoryList(data.sessions || []);
+  // Show resume banner if there's a draft and no active local session
+  if (!state.games.length) checkForDraft(data);
 }
 
 function renderHistoryList(sessions) {
