@@ -9,6 +9,335 @@
   },
   "sessions": [
     {
+      "id": "1772120311483",
+      "date": "2026-02-26",
+      "sessionNum": 2,
+      "label": "Session 2",
+      "savedBy": "steinraphael",
+      "savedAt": "2026-02-26T15:38:31.483Z",
+      "players": [
+        "Stein",
+        "Diego",
+        "Rafa",
+        "Vini",
+        "Mauricio"
+      ],
+      "numPlayers": 5,
+      "games": [
+        {
+          "id": 1,
+          "doubleA": [
+            "Stein",
+            "Diego"
+          ],
+          "doubleB": [
+            "Rafa",
+            "Vini"
+          ],
+          "resting": "Mauricio",
+          "round": 1
+        },
+        {
+          "id": 2,
+          "doubleA": [
+            "Diego",
+            "Rafa"
+          ],
+          "doubleB": [
+            "Vini",
+            "Mauricio"
+          ],
+          "resting": "Stein",
+          "round": 1
+        },
+        {
+          "id": 3,
+          "doubleA": [
+            "Stein",
+            "Vini"
+          ],
+          "doubleB": [
+            "Rafa",
+            "Mauricio"
+          ],
+          "resting": "Diego",
+          "round": 1
+        },
+        {
+          "id": 4,
+          "doubleA": [
+            "Stein",
+            "Mauricio"
+          ],
+          "doubleB": [
+            "Diego",
+            "Vini"
+          ],
+          "resting": "Rafa",
+          "round": 2
+        },
+        {
+          "id": 5,
+          "doubleA": [
+            "Stein",
+            "Rafa"
+          ],
+          "doubleB": [
+            "Diego",
+            "Mauricio"
+          ],
+          "resting": "Vini",
+          "round": 2
+        },
+        {
+          "id": 6,
+          "doubleA": [
+            "Diego",
+            "Rafa"
+          ],
+          "doubleB": [
+            "Stein",
+            "Vini"
+          ],
+          "resting": "Mauricio",
+          "round": 2
+        },
+        {
+          "id": 7,
+          "doubleA": [
+            "Diego",
+            "Vini"
+          ],
+          "doubleB": [
+            "Rafa",
+            "Mauricio"
+          ],
+          "resting": "Stein",
+          "round": 3
+        },
+        {
+          "id": 8,
+          "doubleA": [
+            "Rafa",
+            "Vini"
+          ],
+          "doubleB": [
+            "Stein",
+            "Mauricio"
+          ],
+          "resting": "Diego",
+          "round": 3
+        },
+        {
+          "id": 9,
+          "doubleA": [
+            "Stein",
+            "Diego"
+          ],
+          "doubleB": [
+            "Vini",
+            "Mauricio"
+          ],
+          "resting": "Rafa",
+          "round": 3
+        },
+        {
+          "id": 10,
+          "doubleA": [
+            "Diego",
+            "Rafa"
+          ],
+          "doubleB": [
+            "Stein",
+            "Mauricio"
+          ],
+          "resting": "Vini",
+          "round": 4
+        },
+        {
+          "id": 11,
+          "doubleA": [
+            "Stein",
+            "Rafa"
+          ],
+          "doubleB": [
+            "Diego",
+            "Vini"
+          ],
+          "resting": "Mauricio",
+          "round": 4
+        },
+        {
+          "id": 12,
+          "doubleA": [
+            "Rafa",
+            "Vini"
+          ],
+          "doubleB": [
+            "Diego",
+            "Mauricio"
+          ],
+          "resting": "Stein",
+          "round": 4
+        },
+        {
+          "id": 13,
+          "doubleA": [
+            "Stein",
+            "Rafa"
+          ],
+          "doubleB": [
+            "Vini",
+            "Mauricio"
+          ],
+          "resting": "Diego",
+          "round": 5
+        },
+        {
+          "id": 14,
+          "doubleA": [
+            "Stein",
+            "Vini"
+          ],
+          "doubleB": [
+            "Diego",
+            "Mauricio"
+          ],
+          "resting": "Rafa",
+          "round": 5
+        },
+        {
+          "id": 15,
+          "doubleA": [
+            "Stein",
+            "Diego"
+          ],
+          "doubleB": [
+            "Rafa",
+            "Mauricio"
+          ],
+          "resting": "Vini",
+          "round": 5
+        }
+      ],
+      "scores": {
+        "1": "3:1",
+        "2": "3:0",
+        "3": "1:3",
+        "4": "3:0",
+        "5": "0:3"
+      },
+      "leaderboard": [
+        {
+          "name": "Diego",
+          "pts": 9,
+          "played": 4,
+          "avg": "2.3",
+          "diff": 5
+        },
+        {
+          "name": "Mauricio",
+          "pts": 9,
+          "played": 4,
+          "avg": "2.3",
+          "diff": 5
+        },
+        {
+          "name": "Stein",
+          "pts": 7,
+          "played": 4,
+          "avg": "1.8",
+          "diff": 0
+        },
+        {
+          "name": "Rafa",
+          "pts": 7,
+          "played": 4,
+          "avg": "1.8",
+          "diff": 0
+        },
+        {
+          "name": "Vini",
+          "pts": 2,
+          "played": 4,
+          "avg": "0.5",
+          "diff": -10
+        }
+      ],
+      "doublesLeaderboard": [
+        {
+          "pair": "Diego & Rafa",
+          "pts": 3,
+          "played": 1,
+          "avgPts": "3.0",
+          "diff": 3
+        },
+        {
+          "pair": "Mauricio & Stein",
+          "pts": 3,
+          "played": 1,
+          "avgPts": "3.0",
+          "diff": 3
+        },
+        {
+          "pair": "Diego & Mauricio",
+          "pts": 3,
+          "played": 1,
+          "avgPts": "3.0",
+          "diff": 3
+        },
+        {
+          "pair": "Diego & Stein",
+          "pts": 3,
+          "played": 1,
+          "avgPts": "3.0",
+          "diff": 2
+        },
+        {
+          "pair": "Mauricio & Rafa",
+          "pts": 3,
+          "played": 1,
+          "avgPts": "3.0",
+          "diff": 2
+        },
+        {
+          "pair": "Rafa & Vini",
+          "pts": 1,
+          "played": 1,
+          "avgPts": "1.0",
+          "diff": -2
+        },
+        {
+          "pair": "Stein & Vini",
+          "pts": 1,
+          "played": 1,
+          "avgPts": "1.0",
+          "diff": -2
+        },
+        {
+          "pair": "Mauricio & Vini",
+          "pts": 0,
+          "played": 1,
+          "avgPts": "0.0",
+          "diff": -3
+        },
+        {
+          "pair": "Diego & Vini",
+          "pts": 0,
+          "played": 1,
+          "avgPts": "0.0",
+          "diff": -3
+        },
+        {
+          "pair": "Rafa & Stein",
+          "pts": 0,
+          "played": 1,
+          "avgPts": "0.0",
+          "diff": -3
+        }
+      ]
+    },
+    {
       "id": "1772117218340",
       "date": "2026-02-26",
       "savedBy": "steinraphael",
