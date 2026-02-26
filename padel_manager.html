@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Padel Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f0d;
+    --surface: #111a14;
+    --surface2: #1a2820;
+    --border: #243320;
+    --accent: #5aff7e;
+    --accent2: #ff5a5a;
+    --accent3: #ffd95a;
+    --text: #e8f5e8;
+    --text2: #7a9e7a;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+  h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
+
+  /* ---- LAYOUT ---- */
+  .app { max-width: 480px; margin: 0 auto; padding: 0 0 80px; }
+
+  /* ---- HEADER ---- */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-logo .court-icon {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .header-logo h1 { font-size: 20px; color: var(--text); letter-spacing: -0.5px; }
+  .header-user {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text2);
+  }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: var(--accent);
+    overflow: hidden;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .btn-ghost {
+    background: none; border: none; color: var(--text2);
+    cursor: pointer; font-size: 13px; padding: 6px 10px;
+    border-radius: 8px; transition: background .2s;
+  }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+
+  /* ---- SECTIONS / PAGES ---- */
+  .page { display: none; padding: 20px; animation: fadeIn .3s; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+
+  /* ---- LOGIN PAGE ---- */
+  .login-hero {
+    text-align: center;
+    padding: 48px 0 32px;
+  }
+  .login-hero .big-court {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--accent), #2adf5a);
+    border-radius: 20px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 40px; margin-bottom: 20px;
+    box-shadow: 0 0 40px rgba(90,255,126,0.25);
+  }
+  .login-hero h2 { font-size: 32px; color: var(--text); margin-bottom: 8px; }
+  .login-hero p { color: var(--text2); font-size: 15px; line-height: 1.5; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
+  .field input {
+    width: 100%; padding: 12px 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px;
+    outline: none; transition: border-color .2s;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .btn {
+    width: 100%; padding: 14px;
+    border: none; border-radius: 10px;
+    font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all .2s;
+    letter-spacing: .3px;
+  }
+  .btn-primary {
+    background: var(--accent); color: var(--bg);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(90,255,126,0.3); }
+  .btn-primary:active { transform: none; }
+  .btn-secondary {
+    background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-danger { background: var(--accent2); color: #fff; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+  .divider { text-align: center; color: var(--text2); font-size: 12px; margin: 12px 0; }
+  .link-btn { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 14px; text-decoration: underline; }
+
+  /* ---- TABS ---- */
+  .tabs {
+    display: flex; gap: 4px;
+    background: var(--surface);
+    padding: 4px; border-radius: 12px;
+    margin-bottom: 20px;
+  }
+  .tab {
+    flex: 1; padding: 10px; border: none; border-radius: 9px;
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all .2s;
+    background: none; color: var(--text2);
+  }
+  .tab.active { background: var(--accent); color: var(--bg); }
+
+  /* ---- SETUP ---- */
+  .num-players { display: flex; gap: 8px; margin-bottom: 16px; }
+  .num-btn {
+    flex: 1; padding: 12px;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 10px; color: var(--text2);
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all .2s;
+  }
+  .num-btn.selected { border-color: var(--accent); color: var(--accent); background: rgba(90,255,126,0.07); }
+  .section-title {
+    font-size: 11px; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  /* ---- GAME CARDS ---- */
+  .game-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+    transition: border-color .2s;
+  }
+  .game-card.scored { border-color: rgba(90,255,126,0.3); }
+  .game-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .game-num {
+    font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+    color: var(--text2); text-transform: uppercase; letter-spacing: 1px;
+  }
+  .round-badge {
+    font-size: 10px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 20px;
+    padding: 2px 8px; color: var(--text2);
+  }
+  .teams {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: 8px;
+  }
+  .team { text-align: center; }
+  .team-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .vs { font-family: 'Syne', sans-serif; font-size: 11px; color: var(--text2); font-weight: 700; }
+  .score-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-top: 12px;
+  }
+  .score-input {
+    width: 52px; height: 44px;
+    text-align: center; font-size: 20px; font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 8px; color: var(--text); outline: none;
+    transition: border-color .2s;
+    -moz-appearance: textfield;
+  }
+  .score-input::-webkit-inner-spin-button,
+  .score-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .score-input:focus { border-color: var(--accent); }
+  .score-sep { font-size: 18px; color: var(--text2); font-weight: 700; }
+  .resting { font-size: 11px; color: var(--text2); text-align: center; margin-top: 8px; }
+
+  /* ---- LEADERBOARD ---- */
+  .lb-row {
+    display: flex; align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 16px;
+    margin-bottom: 8px;
+    gap: 12px;
+    transition: border-color .2s;
+  }
+  .lb-row:first-child { border-color: rgba(255,217,90,.4); }
+  .lb-row:nth-child(2) { border-color: rgba(200,200,200,.3); }
+  .lb-row:nth-child(3) { border-color: rgba(200,130,50,.3); }
+  .lb-rank {
+    font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800;
+    width: 28px; text-align: center;
+    color: var(--text2);
+  }
+  .lb-row:first-child .lb-rank { color: var(--accent3); }
+  .lb-info { flex: 1; }
+  .lb-name { font-size: 15px; font-weight: 500; }
+  .lb-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .lb-pts {
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+    color: var(--accent);
+  }
+  .lb-pts-label { font-size: 10px; color: var(--text2); text-align: right; }
+
+  /* ---- HISTORY ---- */
+  .history-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .history-card:hover { border-color: var(--accent); }
+  .history-date { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+  .history-meta { font-size: 12px; color: var(--text2); margin-top: 4px; }
+  .history-players { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .player-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 12px; color: var(--text);
+  }
+  .history-winner {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 10px; font-size: 13px; color: var(--accent3);
+  }
+
+  /* ---- BOTTOM NAV ---- */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex; padding: 8px 0 env(safe-area-inset-bottom, 8px);
+    z-index: 100;
+  }
+  .nav-btn {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 3px; padding: 8px 4px;
+    background: none; border: none; cursor: pointer;
+    color: var(--text2); font-family: 'DM Sans', sans-serif;
+    font-size: 10px; transition: color .2s;
+  }
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn svg { width: 22px; height: 22px; }
+
+  /* ---- TOAST ---- */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 10px 20px;
+    font-size: 13px; color: var(--text);
+    opacity: 0; transition: all .3s; pointer-events: none;
+    white-space: nowrap; z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: var(--accent); color: var(--accent); }
+  .toast.error { border-color: var(--accent2); color: var(--accent2); }
+
+  /* ---- MODAL ---- */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.7);
+    display: flex; align-items: flex-end; justify-content: center;
+    z-index: 300; opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .overlay.show { opacity: 1; pointer-events: all; }
+  .modal-sheet {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%; max-width: 480px;
+    transform: translateY(100%); transition: transform .3s;
+  }
+  .overlay.show .modal-sheet { transform: none; }
+  .modal-handle {
+    width: 40px; height: 4px; background: var(--border);
+    border-radius: 2px; margin: 0 auto 20px;
+  }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .modal-actions .btn { flex: 1; }
+
+  /* ---- STATS MINI ---- */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px;
+    text-align: center;
+  }
+  .stat-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .6px; margin-top: 4px; }
+
+  /* ---- MISC ---- */
+  .empty { text-align: center; padding: 48px 20px; color: var(--text2); }
+  .empty h3 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
+  .spinner {
+    width: 24px; height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 32px; color: var(--text2); }
+  .text-accent { color: var(--accent); }
+  .text-danger { color: var(--accent2); }
+  .mt-12 { margin-top: 12px; }
+  .mt-20 { margin-top: 20px; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .small { font-size: 12px; color: var(--text2); }
+  .chip {
+    display: inline-block;
+    background: rgba(90,255,126,0.1); color: var(--accent);
+    border: 1px solid rgba(90,255,126,0.25);
+    border-radius: 20px; padding: 3px 10px; font-size: 12px;
+  }
+
+  /* config instructions */
+  .config-box {
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: 12px; padding: 16px;
+    margin-bottom: 20px; font-size: 13px; line-height: 1.6;
+  }
+  .config-box h4 { color: var(--accent); font-size: 14px; margin-bottom: 8px; }
+  .config-box code {
+    background: var(--bg); border-radius: 4px; padding: 1px 5px;
+    font-family: monospace; font-size: 12px; color: var(--accent3);
+  }
+  .config-box ol { padding-left: 18px; }
+  .config-box li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header" id="app-header" style="display:none">
+  <div class="header-logo">
+    <div class="court-icon">🎾</div>
+    <h1>Padel</h1>
+  </div>
+  <div class="header-user">
+    <span id="header-username"></span>
+    <div class="avatar" id="header-avatar"></div>
+    <button class="btn-ghost" onclick="logout()">Out</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- ===== LOGIN PAGE ===== -->
+  <div class="page active" id="page-login">
+    <div class="login-hero">
+      <div class="big-court">🎾</div>
+      <h2>Padel Manager</h2>
+      <p>Track your group's round robin games,<br>scores and rankings.</p>
+    </div>
+
+    <div class="card" id="login-form">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="login-username" placeholder="e.g. carlos" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+      <div class="divider">— or —</div>
+      <button class="btn btn-secondary" onclick="showRegister()">Create Account</button>
+    </div>
+
+    <div class="card" id="register-form" style="display:none">
+      <h3 style="margin-bottom:16px;font-size:16px">Create Account</h3>
+      <div class="field">
+        <label>Display Name</label>
+        <input type="text" id="reg-name" placeholder="Your name">
+      </div>
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="reg-username" placeholder="lowercase, no spaces">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="Min 6 characters">
+      </div>
+      <button class="btn btn-primary" onclick="doRegister()">Create Account</button>
+      <div class="divider"></div>
+      <button class="btn-ghost" style="width:100%;text-align:center" onclick="showLogin()">← Back to Sign In</button>
+    </div>
+
+    <div style="text-align:center;margin:8px 0">
+      <button class="btn-ghost" onclick="toggleConfig()" style="font-size:13px;color:var(--text2)">⚙️ View / Edit GitHub Config</button>
+    </div>
+
+    <div class="config-box" id="config-instructions" style="display:none">
+      <h4>⚙️ First-time Setup Required</h4>
+      <p>This app uses your GitHub repo to store game data. Configure it once:</p>
+      <ol>
+        <li>Create a file <code>padel-data.json</code> in your repo with content: <code>{"users":{},"sessions":[]}</code></li>
+        <li>Generate a GitHub Personal Access Token (Settings → Developer → Tokens → Fine-grained) with <b>Contents: Read & Write</b> for your repo</li>
+        <li>Enter your details below</li>
+      </ol>
+      <div class="field mt-12">
+        <label>GitHub Token</label>
+        <input type="password" id="cfg-token" placeholder="github_pat_...">
+      </div>
+      <div class="field">
+        <label>GitHub Owner (username or org)</label>
+        <input type="text" id="cfg-owner" placeholder="your-github-username">
+      </div>
+      <div class="field">
+        <label>Repo Name</label>
+        <input type="text" id="cfg-repo" placeholder="padel-tracker">
+      </div>
+      <div class="field">
+        <label>File path in repo</label>
+        <input type="text" id="cfg-file" value="padel-data.json">
+      </div>
+      <button class="btn btn-primary" onclick="saveConfig()" style="margin-top:4px">Save Config</button>
+    </div>
+  </div>
+
+  <!-- ===== MAIN APP ===== -->
+  <div class="page" id="page-app">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('today')" id="tab-today">Today</button>
+      <button class="tab" onclick="switchTab('board')" id="tab-board">Leaderboard</button>
+      <button class="tab" onclick="switchTab('history')" id="tab-history">History</button>
+    </div>
+
+    <!-- TAB: TODAY -->
+    <div id="view-today" class="tab-view">
+      <!-- Setup -->
+      <div id="setup-panel">
+        <p class="section-title">Number of Players</p>
+        <div class="num-players">
+          <button class="num-btn selected" onclick="selectNumPlayers(4)" id="np-4">4 Players</button>
+          <button class="num-btn" onclick="selectNumPlayers(5)" id="np-5">5 Players</button>
+        </div>
+        <div class="field">
+          <label>Player Names (comma separated)</label>
+          <input type="text" id="player-names" placeholder="Carlos, Ana, Migs, Laura">
+        </div>
+        <button class="btn btn-primary" onclick="generateGames()">Generate Games</button>
+      </div>
+
+      <!-- Games -->
+      <div id="games-panel" style="display:none">
+        <div class="flex-between mt-20" style="margin-bottom:12px">
+          <span class="section-title" style="margin:0">15 Games</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px" onclick="saveSession()">💾 Save</button>
+            <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px" onclick="confirmReset()">↺ Reset</button>
+          </div>
+        </div>
+        <div id="game-list"></div>
+      </div>
+    </div>
+
+    <!-- TAB: LEADERBOARD -->
+    <div id="view-board" class="tab-view" style="display:none">
+      <div id="board-content">
+        <div class="empty"><h3>No active session</h3><p>Generate games in Today tab</p></div>
+      </div>
+    </div>
+
+    <!-- TAB: HISTORY -->
+    <div id="view-history" class="tab-view" style="display:none">
+      <div id="history-content">
+        <div class="loading"><div class="spinner"></div> Loading...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RESET MODAL -->
+<div class="overlay" id="reset-overlay" onclick="closeModal('reset-overlay')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Reset game?</div>
+    <p style="color:var(--text2);font-size:14px">This will clear the current session from your device. Saved sessions in history won't be affected.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('reset-overlay')">Cancel</button>
+      <button class="btn btn-danger" onclick="doReset()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY DETAIL MODAL -->
+<div class="overlay" id="history-overlay" onclick="closeModal('history-overlay')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div id="history-detail-content"></div>
+    <div class="modal-actions mt-12">
+      <button class="btn btn-secondary" onclick="closeModal('history-overlay')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+//  CONFIG & STATE
+// ============================================================
+let config = {};
+let currentUser = null;
+let githubData = null; // { users:{}, sessions:[] }
+let fileSha = null;
+
+const state = {
+  players: [],
+  numPlayers: 4,
+  games: [],
+  scores: {}
+};
+
+// ============================================================
+//  INIT
+// ============================================================
+window.onload = () => {
+  loadConfig();
+  const saved = localStorage.getItem('padel_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    initApp();
+  }
+};
+
+function loadConfig() {
+  const c = localStorage.getItem('padel_config');
+  if (c) {
+    config = JSON.parse(c);
+    document.getElementById('cfg-token').value = config.token || '';
+    document.getElementById('cfg-owner').value = config.owner || '';
+    document.getElementById('cfg-repo').value = config.repo || '';
+    document.getElementById('cfg-file').value = config.file || 'padel-data.json';
+  }
+}
+
+function toggleConfig() {
+  const box = document.getElementById('config-instructions');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveConfig() {
+  config = {
+    token: document.getElementById('cfg-token').value.trim(),
+    owner: document.getElementById('cfg-owner').value.trim(),
+    repo: document.getElementById('cfg-repo').value.trim(),
+    file: document.getElementById('cfg-file').value.trim() || 'padel-data.json'
+  };
+  if (!config.token || !config.owner || !config.repo) {
+    toast('Fill in all config fields', 'error'); return;
+  }
+  localStorage.setItem('padel_config', JSON.stringify(config));
+  toast('Config saved! ✓', 'success');
+  document.getElementById('config-instructions').style.display = 'none';
+}
+
+// ============================================================
+//  GITHUB API
+// ============================================================
+async function githubGet() {
+  if (!config.token) { toast('No token — fill in config first', 'error'); return null; }
+  if (!config.owner || !config.repo) { toast('Missing owner or repo in config', 'error'); return null; }
+  const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.file}`;
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: `token ${config.token}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (res.status === 401) { toast('Token invalid or expired', 'error'); return null; }
+    if (res.status === 403) { toast('Token has no permission for this repo', 'error'); return null; }
+    if (res.status === 404) { toast(`File or repo not found. Check owner="${config.owner}" repo="${config.repo}" file="${config.file}"`, 'error'); return null; }
+    if (!res.ok) { toast(`GitHub error ${res.status}`, 'error'); return null; }
+    const json = await res.json();
+    fileSha = json.sha;
+    const content = atob(json.content.replace(/\n/g, ''));
+    return JSON.parse(content);
+  } catch(e) {
+    toast('Network error: ' + e.message, 'error');
+    return null;
+  }
+}
+
+async function githubPut(data) {
+  if (!config.token) { toast('No GitHub config', 'error'); return false; }
+  const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.file}`;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+  const body = { message: 'padel: update data', content, sha: fileSha };
+  try {
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: { Authorization: `token ${config.token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.status === 401) { toast('Token invalid or expired', 'error'); return false; }
+    if (res.status === 403) { toast('Token needs Contents: Read & Write permission', 'error'); return false; }
+    if (res.status === 422) { toast('SHA mismatch — reload and try again', 'error'); return false; }
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      toast(`Save failed: ${err.message || res.status}`, 'error');
+      return false;
+    }
+    const json = await res.json();
+    fileSha = json.content.sha;
+    return true;
+  } catch(e) {
+    toast('Network error: ' + e.message, 'error');
+    return false;
+  }
+}
+
+// ============================================================
+//  AUTH
+// ============================================================
+async function doLogin() {
+  const username = document.getElementById('login-username').value.trim().toLowerCase();
+  const password = document.getElementById('login-password').value;
+  if (!username || !password) { toast('Enter username and password', 'error'); return; }
+
+  if (!config.token) { toast('Configure GitHub first (see setup below)', 'error'); return; }
+
+  toast('Signing in…');
+  const data = await githubGet();
+  if (!data) { toast('Could not connect to GitHub. Check config.', 'error'); return; }
+  githubData = data;
+
+  const user = data.users[username];
+  if (!user) { toast('User not found', 'error'); return; }
+  if (user.password !== hashPassword(password)) { toast('Wrong password', 'error'); return; }
+
+  currentUser = { username, name: user.name, avatar: user.avatar };
+  localStorage.setItem('padel_user', JSON.stringify(currentUser));
+  initApp();
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const username = document.getElementById('reg-username').value.trim().toLowerCase().replace(/\s/g,'');
+  const password = document.getElementById('reg-password').value;
+  if (!name || !username || !password) { toast('Fill all fields', 'error'); return; }
+  if (password.length < 6) { toast('Password must be 6+ chars', 'error'); return; }
+  if (!config.token) { toast('Configure GitHub first', 'error'); return; }
+
+  toast('Creating account…');
+  const data = await githubGet();
+  if (!data) { toast('Could not connect to GitHub', 'error'); return; }
+  githubData = data;
+
+  if (data.users[username]) { toast('Username taken', 'error'); return; }
+
+  data.users[username] = { name, password: hashPassword(password), avatar: name.charAt(0).toUpperCase(), createdAt: new Date().toISOString() };
+  const ok = await githubPut(data);
+  if (!ok) { toast('Error saving. Check token permissions.', 'error'); return; }
+
+  toast('Account created! Sign in ✓', 'success');
+  showLogin();
+  document.getElementById('login-username').value = username;
+}
+
+function hashPassword(pw) {
+  // Simple hash (not cryptographic - for production use proper hashing)
+  let h = 0;
+  for (let i = 0; i < pw.length; i++) { h = Math.imul(31, h) + pw.charCodeAt(i) | 0; }
+  return 'h' + Math.abs(h).toString(36);
+}
+
+function logout() {
+  localStorage.removeItem('padel_user');
+  currentUser = null;
+  document.getElementById('page-login').classList.add('active');
+  document.getElementById('page-app').classList.remove('active');
+  document.getElementById('app-header').style.display = 'none';
+  showLogin();
+}
+
+function showRegister() {
+  document.getElementById('login-form').style.display = 'none';
+  document.getElementById('register-form').style.display = 'block';
+}
+function showLogin() {
+  document.getElementById('login-form').style.display = 'block';
+  document.getElementById('register-form').style.display = 'none';
+}
+
+function initApp() {
+  document.getElementById('page-login').classList.remove('active');
+  document.getElementById('page-app').classList.add('active');
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('header-username').textContent = currentUser.name;
+  document.getElementById('header-avatar').textContent = currentUser.avatar || currentUser.name.charAt(0).toUpperCase();
+
+  // restore session
+  const saved = localStorage.getItem('padel_session');
+  if (saved) {
+    Object.assign(state, JSON.parse(saved));
+    if (state.games.length > 0) {
+      showGamesPanel();
+      renderGames();
+    }
+  }
+  loadHistory();
+}
+
+// ============================================================
+//  GAME LOGIC
+// ============================================================
+function selectNumPlayers(n) {
+  state.numPlayers = n;
+  document.getElementById('np-4').classList.toggle('selected', n === 4);
+  document.getElementById('np-5').classList.toggle('selected', n === 5);
+}
+
+function generateGames() {
+  const raw = document.getElementById('player-names').value;
+  const players = raw.split(',').map(p => p.trim()).filter(Boolean);
+  if (players.length !== state.numPlayers) {
+    toast(`Enter exactly ${state.numPlayers} names`, 'error'); return;
+  }
+  state.players = players;
+  state.scores = {};
+  state.numPlayers === 4 ? genSchedule4() : genSchedule5();
+  showGamesPanel();
+  renderGames();
+  saveLocal();
+}
+
+function genSchedule4() {
+  const p = state.players;
+  const pairings = [
+    [[p[0],p[1]],[p[2],p[3]]],
+    [[p[0],p[2]],[p[1],p[3]]],
+    [[p[0],p[3]],[p[1],p[2]]]
+  ].sort(() => Math.random() - 0.5);
+  state.games = [];
+  for (let i = 0; i < 15; i++) {
+    const g = pairings[i % 3];
+    state.games.push({ id: i+1, doubleA: g[0], doubleB: g[1], resting: null, round: Math.floor(i/3)+1 });
+  }
+}
+
+function genSchedule5() {
+  const p = state.players;
+  const base = [
+    {a:[1,2],b:[3,4],r:5},{a:[2,3],b:[4,5],r:1},{a:[1,4],b:[3,5],r:2},
+    {a:[1,5],b:[2,4],r:3},{a:[1,3],b:[2,5],r:4},{a:[2,3],b:[1,4],r:5},
+    {a:[2,4],b:[3,5],r:1},{a:[3,4],b:[1,5],r:2},{a:[1,2],b:[4,5],r:3},
+    {a:[2,3],b:[1,5],r:4},{a:[1,3],b:[2,4],r:5},{a:[3,4],b:[2,5],r:1},
+    {a:[1,3],b:[4,5],r:2},{a:[1,4],b:[2,5],r:3},{a:[1,2],b:[3,5],r:4}
+  ];
+  state.games = base.map((g,i) => ({
+    id: i+1,
+    doubleA: [p[g.a[0]-1], p[g.a[1]-1]],
+    doubleB: [p[g.b[0]-1], p[g.b[1]-1]],
+    resting: p[g.r-1],
+    round: Math.floor(i/3)+1
+  }));
+}
+
+function calcLeaderboard() {
+  const ps = {};
+  state.players.forEach(p => ps[p] = { pts: 0, played: 0, won: 0, lost: 0 });
+  state.games.forEach(game => {
+    const sc = state.scores[game.id];
+    if (!sc) return;
+    const [a, b] = sc.split(':').map(Number);
+    if (isNaN(a) || isNaN(b)) return;
+    game.doubleA.forEach(p => { ps[p].pts += a; ps[p].played++; ps[p].won += a; ps[p].lost += b; });
+    game.doubleB.forEach(p => { ps[p].pts += b; ps[p].played++; ps[p].won += b; ps[p].lost += a; });
+  });
+  return Object.entries(ps).map(([name, s]) => ({
+    name, pts: s.pts, played: s.played,
+    avg: s.played ? (s.pts/s.played).toFixed(1) : '-',
+    diff: s.won - s.lost
+  })).sort((a,b) => b.pts - a.pts || b.diff - a.diff);
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function showGamesPanel() {
+  document.getElementById('setup-panel').style.display = 'none';
+  document.getElementById('games-panel').style.display = 'block';
+}
+
+function renderGames() {
+  const el = document.getElementById('game-list');
+  el.innerHTML = '';
+  state.games.forEach(game => {
+    const sc = state.scores[game.id] || '';
+    const [sa, sb] = sc ? sc.split(':') : ['', ''];
+    const scored = sa !== '' && sb !== '';
+    el.innerHTML += `
+      <div class="game-card ${scored ? 'scored' : ''}" id="gc-${game.id}">
+        <div class="game-meta">
+          <span class="game-num">Game ${game.id}</span>
+          <span class="round-badge">Round ${game.round||''}</span>
+        </div>
+        <div class="teams">
+          <div class="team"><div class="team-name">${game.doubleA.join('<br>')}</div></div>
+          <div class="vs">VS</div>
+          <div class="team"><div class="team-name">${game.doubleB.join('<br>')}</div></div>
+        </div>
+        <div class="score-row">
+          <input type="number" class="score-input" id="sa-${game.id}" value="${sa}" placeholder="0" min="0" oninput="onScore(${game.id})">
+          <span class="score-sep">:</span>
+          <input type="number" class="score-input" id="sb-${game.id}" value="${sb}" placeholder="0" min="0" oninput="onScore(${game.id})">
+        </div>
+        ${game.resting ? `<div class="resting">🪑 ${game.resting} resting</div>` : ''}
+      </div>`;
+  });
+  renderBoard();
+}
+
+function onScore(id) {
+  const a = document.getElementById(`sa-${id}`).value;
+  const b = document.getElementById(`sb-${id}`).value;
+  state.scores[id] = `${a}:${b}`;
+  const scored = a !== '' && b !== '';
+  document.getElementById(`gc-${id}`).classList.toggle('scored', scored);
+  saveLocal();
+  renderBoard();
+}
+
+function renderBoard() {
+  const lb = calcLeaderboard();
+  const el = document.getElementById('board-content');
+  const gamesPlayed = Object.values(state.scores).filter(s => { const [a,b] = s.split(':'); return a!==''&&b!==''; }).length;
+  el.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-val">${gamesPlayed}</div><div class="stat-label">Games Scored</div></div>
+      <div class="stat-card"><div class="stat-val">${state.games.length - gamesPlayed}</div><div class="stat-label">Remaining</div></div>
+    </div>
+    ${lb.map((p,i) => `
+      <div class="lb-row">
+        <div class="lb-rank">${i+1}</div>
+        <div class="lb-info">
+          <div class="lb-name">${p.name}</div>
+          <div class="lb-sub">${p.played} games · avg ${p.avg} · diff ${p.diff > 0 ? '+' : ''}${p.diff}</div>
+        </div>
+        <div>
+          <div class="lb-pts">${p.pts}</div>
+          <div class="lb-pts-label">pts</div>
+        </div>
+      </div>`).join('')}`;
+}
+
+// ============================================================
+//  SAVE SESSION TO GITHUB
+// ============================================================
+async function saveSession() {
+  const scoresEntered = Object.values(state.scores).filter(s => {
+    const [a,b] = s.split(':');
+    return a !== '' && b !== '';
+  }).length;
+  if (scoresEntered === 0) { toast('Enter at least one score first', 'error'); return; }
+
+  toast('Saving…');
+  let data = githubData;
+  if (!data) data = await githubGet();
+  if (!data) { toast('Cannot connect to GitHub', 'error'); return; }
+  githubData = data;
+
+  const lb = calcLeaderboard();
+  const session = {
+    id: Date.now().toString(),
+    date: new Date().toISOString().slice(0, 10),
+    savedBy: currentUser.username,
+    savedAt: new Date().toISOString(),
+    players: state.players,
+    numPlayers: state.numPlayers,
+    games: state.games,
+    scores: state.scores,
+    leaderboard: lb
+  };
+
+  // Check if same date session exists (update) or add new
+  const idx = data.sessions.findIndex(s => s.date === session.date && JSON.stringify(s.players.sort()) === JSON.stringify([...state.players].sort()));
+  if (idx >= 0) data.sessions[idx] = session;
+  else data.sessions.unshift(session);
+
+  const ok = await githubPut(data);
+  if (!ok) { toast('Save failed. Check token permissions.', 'error'); return; }
+  githubData = data;
+  toast('Saved to GitHub ✓', 'success');
+  renderHistoryList(data.sessions);
+}
+
+// ============================================================
+//  HISTORY
+// ============================================================
+async function loadHistory() {
+  const data = await githubGet();
+  if (!data) {
+    document.getElementById('history-content').innerHTML = `<div class="empty"><h3>Could not load</h3><p>Check GitHub config</p></div>`;
+    return;
+  }
+  githubData = data;
+  renderHistoryList(data.sessions || []);
+}
+
+function renderHistoryList(sessions) {
+  const el = document.getElementById('history-content');
+  if (!sessions.length) {
+    el.innerHTML = `<div class="empty"><h3>No sessions yet</h3><p>Play and save your first session!</p></div>`;
+    return;
+  }
+  el.innerHTML = sessions.map(s => {
+    const winner = s.leaderboard && s.leaderboard[0];
+    return `<div class="history-card" onclick="showSessionDetail('${s.id}')">
+      <div class="flex-between">
+        <div class="history-date">${formatDate(s.date)}</div>
+        <span class="chip">${s.numPlayers}P</span>
+      </div>
+      <div class="history-meta">Saved by ${s.savedBy} · ${Object.values(s.scores||{}).filter(sc=>{const[a,b]=sc.split(':');return a!==''&&b!=='';}).length} games scored</div>
+      <div class="history-players">${(s.players||[]).map(p => `<span class="player-chip">${p}</span>`).join('')}</div>
+      ${winner ? `<div class="history-winner">🏆 ${winner.name} · ${winner.pts} pts</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function showSessionDetail(id) {
+  const s = githubData.sessions.find(x => x.id === id);
+  if (!s) return;
+  const el = document.getElementById('history-detail-content');
+  el.innerHTML = `
+    <div class="modal-title">${formatDate(s.date)}</div>
+    <p class="small" style="margin-bottom:16px">Saved by ${s.savedBy}</p>
+    ${(s.leaderboard||[]).map((p,i) => `
+      <div class="lb-row" style="margin-bottom:8px">
+        <div class="lb-rank">${i+1}</div>
+        <div class="lb-info"><div class="lb-name">${p.name}</div><div class="lb-sub">${p.played} games · avg ${p.avg}</div></div>
+        <div><div class="lb-pts">${p.pts}</div><div class="lb-pts-label">pts</div></div>
+      </div>`).join('')}`;
+  openModal('history-overlay');
+}
+
+// ============================================================
+//  MISC
+// ============================================================
+function switchTab(name) {
+  ['today','board','history'].forEach(t => {
+    document.getElementById(`view-${t}`).style.display = t === name ? 'block' : 'none';
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === name);
+  });
+  if (name === 'board') renderBoard();
+  if (name === 'history' && githubData) renderHistoryList(githubData.sessions || []);
+}
+
+function saveLocal() { localStorage.setItem('padel_session', JSON.stringify(state)); }
+
+function confirmReset() { openModal('reset-overlay'); }
+function doReset() {
+  localStorage.removeItem('padel_session');
+  state.games = []; state.scores = {}; state.players = [];
+  document.getElementById('setup-panel').style.display = 'block';
+  document.getElementById('games-panel').style.display = 'none';
+  document.getElementById('player-names').value = '';
+  closeModal('reset-overlay');
+  toast('Session reset');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+let toastTimer;
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), type === 'error' ? 5000 : 2800);
+}
+
+function formatDate(iso) {
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'long', year:'numeric' });
+}
+</script>
+</body>
+</html>
