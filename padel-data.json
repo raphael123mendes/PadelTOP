@@ -1,1 +1,11 @@
-{"users":{},"sessions":[]}
+{
+  "users": {
+    "steinraphael": {
+      "name": "Stein",
+      "password": "hlw6gj9",
+      "avatar": "S",
+      "createdAt": "2026-02-26T14:45:46.286Z"
+    }
+  },
+  "sessions": []
+}
