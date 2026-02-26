@@ -171,6 +171,10 @@
         <label>Password</label>
         <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
       </div>
+      <div class="field" id="token-field">
+        <label>GitHub Token <span style="color:var(--accent);font-size:10px;text-transform:none;letter-spacing:0">— only needed on first login per device</span></label>
+        <input type="password" id="login-token" placeholder="github_pat_..." autocomplete="off">
+      </div>
       <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
       <div class="divider">— or —</div>
       <button class="btn btn-secondary" onclick="showRegister()">Create Account</button>
@@ -271,12 +275,12 @@
 
 <script>
 // ============================================================
-//  ⚙️  CONFIGURATION — edit these 4 lines only
+//  ⚙️  CONFIGURATION — owner/repo hardcoded, token per-device
 // ============================================================
-const GITHUB_TOKEN = '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';
 const GITHUB_OWNER = 'raphael123mendes';
 const GITHUB_REPO  = 'PadelTOP';
 const GITHUB_FILE  = 'padel-data.json';
+let   GITHUB_TOKEN = localStorage.getItem('padel_token') || '';
 // ============================================================
 
 let currentUser = null;
@@ -288,6 +292,10 @@ const state = {
 };
 
 window.onload = () => {
+  // Hide token field if already saved on this device
+  if (GITHUB_TOKEN) {
+    document.getElementById('token-field').style.display = 'none';
+  }
   const saved = localStorage.getItem('padel_user');
   if (saved) { currentUser = JSON.parse(saved); initApp(); }
 };
@@ -331,6 +339,15 @@ async function doLogin() {
   const username = document.getElementById('login-username').value.trim().toLowerCase();
   const password = document.getElementById('login-password').value;
   if (!username || !password) { toast('Enter username and password', 'error'); return; }
+
+  // Save token if provided
+  const tokenInput = document.getElementById('login-token').value.trim();
+  if (tokenInput) {
+    GITHUB_TOKEN = tokenInput;
+    localStorage.setItem('padel_token', tokenInput);
+  }
+  if (!GITHUB_TOKEN) { toast('Enter your GitHub token on first login', 'error'); return; }
+
   toast('Signing in…');
   const data = await githubGet();
   if (!data) return;
@@ -349,6 +366,7 @@ async function doRegister() {
   const password = document.getElementById('reg-password').value;
   if (!name || !username || !password) { toast('Fill all fields', 'error'); return; }
   if (password.length < 6) { toast('Password must be 6+ characters', 'error'); return; }
+  if (!GITHUB_TOKEN) { toast('Enter your GitHub token on the Sign In page first', 'error'); return; }
   toast('Creating account…');
   const data = await githubGet();
   if (!data) return;
@@ -375,6 +393,8 @@ function logout() {
   document.getElementById('page-login').classList.add('active');
   document.getElementById('page-app').classList.remove('active');
   document.getElementById('app-header').style.display = 'none';
+  // Keep token saved — no need to re-enter on same device
+  document.getElementById('token-field').style.display = 'none';
   showLogin();
 }
 
